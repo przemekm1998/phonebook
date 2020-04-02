@@ -1,0 +1,26 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Password reset on localhost:8000
+From: webmaster@localhost
+To: przemic98@gmail.com
+Date: Thu, 02 Apr 2020 16:42:07 -0000
+Message-ID: 
+ <158584572723.10580.15260448441533505152@przemek-Lenovo-IdeaPad-Y580>
+
+
+You're receiving this email because you requested a password reset for your user account at localhost:8000.
+
+Please go to the following page and choose a new password:
+
+http://localhost:8000/password-reset-confirm/Mg/5fb-f8bebcc772adf8b3fecf
+
+Your username, in case you’ve forgotten: przemek
+
+Thanks for using our site!
+
+The localhost:8000 team
+
+
+
+-------------------------------------------------------------------------------

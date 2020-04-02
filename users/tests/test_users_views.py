@@ -42,3 +42,54 @@ def test_login_view_authentication(user, response_code, factory, db):
     response = RegisterView.as_view()(request)
 
     assert response.status_code == response_code
+
+
+@pytest.mark.parametrize('user, response_code',
+                         [
+                             (User(), 200),
+                             (AnonymousUser(), 200)
+                         ])
+def test_reset_password_view(user, response_code, factory, db):
+    """ Verify if login page is accessible"""
+
+    path = reverse('password_reset')
+    request = factory.get(path)
+    request.user = user
+
+    response = RegisterView.as_view()(request)
+
+    assert response.status_code == response_code
+
+
+@pytest.mark.parametrize('user, response_code',
+                         [
+                             (User(), 200),
+                             (AnonymousUser(), 200)
+                         ])
+def test_reset_password_reset_done(user, response_code, factory, db):
+    """ Verify if login page is accessible"""
+
+    path = reverse('password_reset_done')
+    request = factory.get(path)
+    request.user = user
+
+    response = RegisterView.as_view()(request)
+
+    assert response.status_code == response_code
+
+
+@pytest.mark.parametrize('user, response_code',
+                         [
+                             (User(), 200),
+                             (AnonymousUser(), 200)
+                         ])
+def test_reset_password_complete(user, response_code, factory, db):
+    """ Verify if login page is accessible"""
+
+    path = reverse('password_reset')
+    request = factory.get(path)
+    request.user = user
+
+    response = RegisterView.as_view()(request)
+
+    assert response.status_code == response_code

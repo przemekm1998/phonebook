@@ -52,21 +52,22 @@
 </div>
 <div id="source">
     <p id="t1" class="run"><span class="n"><a href="#t1">1</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">urls</span> <span class="key">import</span> <span class="nam">path</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t2" class="run"><span class="n"><a href="#t2">2</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">auth</span> <span class="key">import</span> <span class="nam">views</span> <span class="key">as</span> <span class="nam">auth_views</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t3" class="pln"><span class="n"><a href="#t3">3</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t4" class="run"><span class="n"><a href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">views</span> <span class="key">import</span> <span class="nam">RegisterView</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t2" class="pln"><span class="n"><a href="#t2">2</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t3" class="run"><span class="n"><a href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">auth</span> <span class="key">import</span> <span class="nam">views</span> <span class="key">as</span> <span class="nam">auth_views</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t4" class="run"><span class="n"><a href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">views</span> <span class="key">import</span> <span class="nam">RegisterView</span><span class="op">,</span> <span class="nam">CustomLogoutView</span>&nbsp;</span><span class="r"></span></p>
     <p id="t5" class="pln"><span class="n"><a href="#t5">5</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t6" class="run"><span class="n"><a href="#t6">6</a></span><span class="t"><span class="nam">urlpatterns</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p id="t7" class="pln"><span class="n"><a href="#t7">7</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">'register/'</span><span class="op">,</span> <span class="nam">RegisterView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">'users-register'</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t8" class="pln"><span class="n"><a href="#t8">8</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">'login/'</span><span class="op">,</span> <span class="nam">auth_views</span><span class="op">.</span><span class="nam">LoginView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="nam">template_name</span><span class="op">=</span><span class="str">'users/login.html'</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t9" class="pln"><span class="n"><a href="#t9">9</a></span><span class="t">         <span class="nam">name</span><span class="op">=</span><span class="str">'users-login'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t10" class="pln"><span class="n"><a href="#t10">10</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t9" class="pln"><span class="n"><a href="#t9">9</a></span><span class="t">         <span class="nam">name</span><span class="op">=</span><span class="str">'users-login'</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t10" class="pln"><span class="n"><a href="#t10">10</a></span><span class="t">    <span class="nam">path</span><span class="op">(</span><span class="str">'logout/'</span><span class="op">,</span> <span class="nam">CustomLogoutView</span><span class="op">.</span><span class="nam">as_view</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">name</span><span class="op">=</span><span class="str">'users-logout'</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t11" class="pln"><span class="n"><a href="#t11">11</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.0.4</a>,
-            created at 2020-04-02 14:51
+            created at 2020-04-02 16:51
         </p>
     </div>
 </div>

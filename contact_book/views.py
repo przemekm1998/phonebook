@@ -2,6 +2,7 @@ from django.views.generic import ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from .models import Person, Email
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 class HomePageView(LoginRequiredMixin, ListView):
@@ -16,16 +17,17 @@ class HomePageView(LoginRequiredMixin, ListView):
         return Person.objects.filter(owner=user).order_by('-date_added')
 
 
-class PersonCreateView(LoginRequiredMixin, CreateView):
+class PersonCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Person
     fields = ['first_name', 'second_name', 'note']
+    success_message = 'Person created successfully!'
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
 
-class EmailCreateView(LoginRequiredMixin, CreateView):
+class EmailCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Email
     fields = ['email', 'person']
 

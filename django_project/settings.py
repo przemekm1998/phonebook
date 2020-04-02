@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',  # new
     'contact_book.apps.ContactBookConfig',  # new
-    'crispy_forms',
+    'crispy_forms',  # new
 ]
 
 MIDDLEWARE = [
@@ -117,3 +117,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'users-login'

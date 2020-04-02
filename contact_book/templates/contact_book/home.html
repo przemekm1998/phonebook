@@ -1,0 +1,23 @@
+{% extends "contact_book/base.html" %}
+{% block content %}
+<h1 class="mb-3">Hello {{user.username}}, welcome to contacts book!</h1>
+{% if not people %}
+<h2>
+    It seems you have no contacts yet, <a href="{% url 'create-person' %}"> add one
+    here!</a></h2>
+{% else %}
+<h2><a href="{% url 'create-person' %}">Add new person!</a></h2>
+<h2 class="mb-3"> Your contacts:</h2>
+{% for person in people %}
+        <article class="media content-section">
+            <div class="media-body">
+                <p class="mr-2">First name: {{ person.first_name }}</p>
+                <p class="mr-2">Second name: {{ person.second_name }}</p>
+                <p class="mr-2">Date added: {{ person.date_added }}</p>
+                <p class="mr-2">Notes: {{ person.note }}</p>
+            </div>
+    </article>
+    <hr>
+{% endfor %}
+{% endif %}
+{% endblock content %}

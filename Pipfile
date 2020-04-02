@@ -7,6 +7,11 @@ verify_ssl = true
 
 [packages]
 django = "*"
+pytest-django = "*"
+pytest = "*"
+pytest-cov = "*"
+mixer = "*"
+django-crispy-forms = "*"
 
 [requires]
 python_version = "3.7"

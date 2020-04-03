@@ -25,7 +25,7 @@ class Person(models.Model):
 class Email(models.Model):
     """ Email model """
 
-    email = models.EmailField(null=False)
+    email = models.EmailField(null=False, unique=True)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -35,7 +35,7 @@ class Email(models.Model):
 class Phone(models.Model):
     """ Phone model """
 
-    phone = models.DecimalField(max_digits=9, decimal_places=0, null=False)
+    phone = models.DecimalField(max_digits=9, decimal_places=0, null=False, unique=True)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -1,19 +1,9 @@
 {% extends "contact_book/base.html" %}
 {% block content %}
-<h1 class="mb-3">Hello {{user.username}}, welcome to contacts book!</h1>
-{% if not people %}
-<h2>
-    It seems you have no contacts yet, <a href="{% url 'create-person' %}"> add one
-    here!</a></h2>
-{% else %}
-<h2 class="mb-3"> Your contacts:</h2>
-<hr>
-{% for person in people %}
+
 <article class="media content-section">
     <div class="media-body">
-        <h2 class="mr-2 mb-0"><a href="{% url 'detail-person' person.id %}">
-            {{ person.first_name }} {{ person.second_name }}
-        </a></h2>
+        <h2 class="mr-2 mb-0">{{ object.first_name }} {{ object.second_name }}</h2>
         <small class="text-muted">Added {{ person.date_added|date:"F d, Y" }}</small>
         <div>
             <a href="{% url 'update-person' person.id %}"
@@ -25,9 +15,12 @@
         </div>
         <h4 class="mr-2 mt-3">Notes</h4>
         <p class="mr-2">{{ person.note }}</p>
+        <div>
+            <a href="{% url 'home' %}"
+               class="btn btn-outline-secondary btn-sm mt-1 mb-1">Back to
+                home
+                page</a>
+        </div>
     </div>
 </article>
-<hr>
-{% endfor %}
-{% endif %}
 {% endblock content %}

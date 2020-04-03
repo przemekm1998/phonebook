@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.views.generic import (ListView, CreateView, UpdateView, DeleteView,
                                   DetailView)
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -60,10 +61,79 @@ class PersonDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return True if self.request.user == person.owner else False
 
 
-class EmailCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class EmailCreateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin,
+                      CreateView):
     model = Email
-    fields = ['email', 'person']
+    fields = ['email']
+    success_message = 'Email created successfully'
 
-    def get_queryset(self):
-        user = User.objects.filter(username=self.request.user.username).first()
-        return Person.objects.filter(owner=user).order_by('-second_name')
+    def form_valid(self, form):
+        person = Person.objects.filter(id=self.kwargs['pk']).first()
+        form.instance.person = person
+        return super().form_valid(form)
+
+    def test_func(self):
+        person = Person.objects.filter(id=self.kwargs['pk']).first()
+        return True if self.request.user == person.owner else False
+
+
+class EmailUpdateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin,
+                      UpdateView):
+    model = Email
+    fields = ['email']
+    success_message = 'Email updated successfully'
+
+    def form_valid(self, form):
+        person = Person.objects.filter(id=self.kwargs['person_id']).first()
+        form.instance.person = person
+        return super().form_valid(form)
+
+    def test_func(self):
+        person = Person.objects.filter(id=self.kwargs['person_id']).first()
+        return True if self.request.user == person.owner else False
+
+
+class EmailDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Person
+
+    @property
+    def success_url(self):
+        return reverse('detail-person', kwargs={'pk': self.person.id})
+
+    @property
+    def person(self):
+        return Person.objects.filter(id=self.kwargs['pk']).first()
+
+    def test_func(self):
+        return True if self.request.user == self.person.owner else False
+
+
+class EmailUpdateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin,
+                      UpdateView):
+    model = Email
+    fields = ['email']
+    success_message = 'Email updated successfully'
+
+    def form_valid(self, form):
+        person = Person.objects.filter(id=self.kwargs['person_id']).first()
+        form.instance.person = person
+        return super().form_valid(form)
+
+    def test_func(self):
+        person = Person.objects.filter(id=self.kwargs['person_id']).first()
+        return True if self.request.user == person.owner else False
+
+
+class EmailDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Email
+
+    @property
+    def success_url(self):
+        return reverse('detail-person', kwargs={'pk': self.person.id})
+
+    @property
+    def person(self):
+        return Person.objects.filter(id=self.kwargs['person_id']).first()
+
+    def test_func(self):
+        return True if self.request.user == self.person.owner else False

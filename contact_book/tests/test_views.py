@@ -3,8 +3,11 @@ from django.test import RequestFactory
 from django.urls import reverse
 from django.contrib.auth.models import User, AnonymousUser
 from mixer.backend.django import mixer
-from contact_book.views import HomePageView
-from contact_book.models import Person
+from contact_book.views import (HomePageView, EmailCreateView, PersonCreateView,
+                                PersonUpdateView, PersonDeleteView, PersonDetailView,
+                                EmailCreateView, EmailUpdateView, EmailDeleteView)
+from contact_book.models import Person, Email
+from django.core.exceptions import PermissionDenied
 
 
 @pytest.fixture(scope='module')
@@ -13,13 +16,18 @@ def factory():
 
 
 @pytest.fixture(scope='function')
-def specific_user(db):
-    yield mixer.blend(User, values={'username': 'przemek', 'id': 1})
+def user(db):
+    yield mixer.blend(User)
 
 
 @pytest.fixture(scope='function')
-def specific_person(db, specific_user):
-    yield mixer.blend(Person, values={'id': 1, 'owner': specific_user})
+def person(db):
+    yield mixer.blend(Person)
+
+
+@pytest.fixture(scope='function')
+def email(db):
+    yield mixer.blend(Email)
 
 
 @pytest.mark.parametrize('user, response_code',
@@ -51,13 +59,13 @@ def test_person_add_authentication(user, response_code, factory, db):
     request = factory.get(path)
     request.user = user
 
-    response = HomePageView.as_view()(request)
+    response = PersonCreateView.as_view()(request)
 
     assert response.status_code == response_code
 
 
-def test_person_edit_authentication_correct_user(factory, specific_user,
-                                                 specific_person, db):
+def test_person_edit_correct_user(factory, user,
+                                  person, db):
     """
     Verify if person editing is accessible if user is authenticated and created the
     person.
@@ -65,14 +73,29 @@ def test_person_edit_authentication_correct_user(factory, specific_user,
 
     path = reverse('update-person', kwargs={'pk': 1})
     request = factory.get(path)
-    request.user = specific_user
+    request.user = person.owner
 
-    response = HomePageView.as_view()(request)
+    response = PersonUpdateView.as_view()(request, pk=1)
 
     assert response.status_code == 200
 
 
-def test_person_edit_authentication_anonymous_user(factory, specific_person, db):
+def test_person_edit_incorrect_user(factory, user,
+                                    person, db):
+    """
+    Verify if person editing is accessible if user is authenticated and not created the
+    person.
+    """
+
+    path = reverse('update-person', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = PersonUpdateView.as_view()(request, pk=1)
+
+
+def test_person_edit_anonymous_user(factory, db):
     """
     Verify if person editing is accessible if user is unauthenticated
     """
@@ -81,13 +104,13 @@ def test_person_edit_authentication_anonymous_user(factory, specific_person, db)
     request = factory.get(path)
     request.user = AnonymousUser()
 
-    response = HomePageView.as_view()(request)
+    response = PersonUpdateView.as_view()(request)
 
     assert response.status_code == 302
 
 
-def test_person_delete_authentication_correct_user(factory, specific_user,
-                                                   specific_person, db):
+def test_person_delete_correct_user(factory, user,
+                                    person, db):
     """
     Verify if person deleting is accessible if user is authenticated and created the
     person.
@@ -95,14 +118,29 @@ def test_person_delete_authentication_correct_user(factory, specific_user,
 
     path = reverse('delete-person', kwargs={'pk': 1})
     request = factory.get(path)
-    request.user = specific_user
+    request.user = person.owner
 
-    response = HomePageView.as_view()(request)
+    response = PersonDeleteView.as_view()(request, pk=1)
 
     assert response.status_code == 200
 
 
-def test_person_delete_authentication_anonymous_user(factory, specific_person, db):
+def test_person_delete_incorrect_user(factory, user,
+                                      person, db):
+    """
+    Verify if person deleting is accessible if user is authenticated and not created the
+    person.
+    """
+
+    path = reverse('delete-person', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = PersonDeleteView.as_view()(request, pk=1)
+
+
+def test_person_delete_anonymous_user(factory, person, db):
     """
     Verify if person deleting is accessible if user is unauthenticated
     """
@@ -111,13 +149,13 @@ def test_person_delete_authentication_anonymous_user(factory, specific_person, d
     request = factory.get(path)
     request.user = AnonymousUser()
 
-    response = HomePageView.as_view()(request)
+    response = PersonDeleteView.as_view()(request, pk=1)
 
     assert response.status_code == 302
 
 
-def test_person_detail_authentication_correct_user(factory, specific_user,
-                                                   specific_person, db):
+def test_person_detail_correct_user(factory, user,
+                                    person, db):
     """
     Verify if person detail is accessible if user is authenticated and created the
     person.
@@ -125,14 +163,29 @@ def test_person_detail_authentication_correct_user(factory, specific_user,
 
     path = reverse('detail-person', kwargs={'pk': 1})
     request = factory.get(path)
-    request.user = specific_user
+    request.user = person.owner
 
-    response = HomePageView.as_view()(request)
+    response = PersonDetailView.as_view()(request, pk=1)
 
     assert response.status_code == 200
 
 
-def test_person_detail_authentication_anonymous_user(factory, specific_person, db):
+def test_person_detail_incorrect_user(factory, user,
+                                      person, db):
+    """
+    Verify if person detail is accessible if user is authenticated and created the
+    person.
+    """
+
+    path = reverse('detail-person', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = PersonDetailView.as_view()(request, pk=1)
+
+
+def test_person_detail_anonymous_user(factory, person, db):
     """
     Verify if person detail is accessible if user is unauthenticated
     """
@@ -141,24 +194,53 @@ def test_person_detail_authentication_anonymous_user(factory, specific_person, d
     request = factory.get(path)
     request.user = AnonymousUser()
 
-    response = HomePageView.as_view()(request)
+    response = PersonDetailView.as_view()(request, pk=1)
 
     assert response.status_code == 302
 
-# def test_person_edit_authentication_incorrect_user(factory, db, specific_user):
-#     """
-#     Verify if person editing is not accessible if user is authenticated and
-#     didn't create the person.
-#     """
-#
-#     Person(first_name='cos', second_name='tam', owner=specific_user).save()
-#     print(Person.objects.filter(owner=specific_user).first().id)
-#
-#     path = reverse('update-person', kwargs={'pk': 1})
-#     request = factory.get(path)
-#     request.user =
-#
-#     response = HomePageView.as_view()(request, id=1)
-#     print(str(response))
 
-# assert response.status_code == 403
+def test_email_create_correct_user(factory, user,
+                                   person, db):
+    """
+    Verify if email creation is accessible if user is authenticated and created the
+    person.
+    """
+
+    path = reverse('email-create', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = person.owner
+
+    response = EmailCreateView.as_view()(request, pk=1)
+
+    assert response.status_code == 200
+
+
+def test_email_create_incorrect_user(factory, user,
+                                     person, db):
+    """
+    Verify if person detail is accessible if user is authenticated and created the
+    person.
+    """
+
+    path = reverse('email-create', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = EmailCreateView.as_view()(request, pk=1)
+
+
+def test_email_create_anonymous_user(factory, person, db):
+    """
+    Verify if person detail is accessible if user is unauthenticated
+    """
+
+    path = reverse('email-create', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = AnonymousUser()
+
+    response = EmailCreateView.as_view()(request, pk=1)
+
+    assert response.status_code == 302
+
+# TODO - END THE REST OF THE TESTS FOR EMAIL

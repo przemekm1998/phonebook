@@ -4,14 +4,45 @@
 <article class="media content-section">
     <div class="media-body">
         <h2 class="mr-2 mb-0">{{ object.first_name }} {{ object.second_name }}</h2>
-        <small class="text-muted">Added {{ person.date_added|date:"F d, Y" }}</small>
+        <small class="text-muted">Added {{ object.date_added|date:"F d, Y" }}</small>
         <div>
-            <a href="{% url 'update-person' person.id %}"
+            <a href="{% url 'update-person' object.id %}"
                class="btn btn-outline-info btn-sm mt-1 mb-1">Edit
                 person</a>
-            <a href="{% url 'delete-person' person.id %}"
+            <a href="{% url 'delete-person' object.id %}"
                class="btn btn-danger btn-sm mt-1 mb-1">Delete
                 person</a>
+        </div>
+        <div class="mt-5 mb-5">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col"><a href="{% url 'email-create' object.id %}"
+                                       class="btn btn-success btn-sm">
+                        Add new
+                    </a></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for email in object.email_set.all %}
+                <tr>
+                    <th scope="row">{{ email.email }}</th>
+                    <td>
+                        <a href="{% url 'email-update' person_id=object.id pk=email.id %}"
+                           class="btn btn-info btn-sm">
+                        Update
+                    </a></td>
+                    <td><a
+                            href="{% url 'email-delete' person_id=object.id pk=email.id %}"
+                           class="btn btn-outline-danger btn-sm">
+                        Delete
+                    </a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
         <h4 class="mr-2 mt-3">Notes</h4>
         <p class="mr-2">{{ person.note }}</p>

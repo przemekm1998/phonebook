@@ -34,3 +34,24 @@ def test_detail_person_detail_url():
 
     path = reverse('detail-person', kwargs={'pk': 1})
     assert resolve(path).view_name == 'detail-person'
+
+
+def test_detail_email_add_url():
+    """ Verify the returned path name """
+
+    path = reverse('email-create', kwargs={'pk': 1})
+    assert resolve(path).view_name == 'email-create'
+
+
+def test_detail_email_update_url():
+    """ Verify the returned path name """
+
+    path = reverse('email-update', kwargs={'pk': 1, 'person_id': 1})
+    assert resolve(path).view_name == 'email-update'
+
+
+def test_detail_email_delete_url():
+    """ Verify the returned path name """
+
+    path = reverse('email-delete', kwargs={'pk': 1, 'person_id': 1})
+    assert resolve(path).view_name == 'email-delete'

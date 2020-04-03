@@ -25,11 +25,14 @@ class Person(models.Model):
 class Email(models.Model):
     """ Email model """
 
-    email = models.EmailField(null=False, unique=True)
+    email = models.EmailField(null=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{str(self.person)} email: {self.email}'
+
+    def get_absolute_url(self):
+        return reverse('detail-person', kwargs={'pk': self.person.pk})
 
 
 class Phone(models.Model):

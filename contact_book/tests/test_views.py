@@ -5,7 +5,8 @@ from django.contrib.auth.models import User, AnonymousUser
 from mixer.backend.django import mixer
 from contact_book.views import (HomePageView, EmailCreateView, PersonCreateView,
                                 PersonUpdateView, PersonDeleteView, PersonDetailView,
-                                EmailCreateView, EmailUpdateView, EmailDeleteView)
+                                EmailCreateView, EmailUpdateView, EmailDeleteView,
+                                PhoneCreateView)
 from contact_book.models import Person, Email
 from django.core.exceptions import PermissionDenied
 
@@ -330,5 +331,51 @@ def test_email_delete_anonymous_user(factory, person, db, email):
     request.user = AnonymousUser()
 
     response = EmailDeleteView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 302
+
+
+def test_phone_create_correct_user(factory, user,
+                                   person, db):
+    """
+    Verify if phone number creation is accessible if user is authenticated and
+    created the
+    person.
+    """
+
+    path = reverse('phone-create', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = person.owner
+
+    response = PhoneCreateView.as_view()(request, pk=1)
+
+    assert response.status_code == 200
+
+
+def test_phone_create_incorrect_user(factory, user,
+                                     person, db):
+    """
+    Verify if create phone number is not accessible if user is authenticated and didn't
+    create the person.
+    """
+
+    path = reverse('phone-create', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = PhoneCreateView.as_view()(request, pk=1)
+
+
+def test_phone_create_anonymous_user(factory, person, db):
+    """
+    Verify if create phone number is not accessible if user is unauthenticated
+    """
+
+    path = reverse('phone-create', kwargs={'pk': 1})
+    request = factory.get(path)
+    request.user = AnonymousUser()
+
+    response = PhoneCreateView.as_view()(request, pk=1)
 
     assert response.status_code == 302

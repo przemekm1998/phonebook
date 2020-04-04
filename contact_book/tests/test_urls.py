@@ -55,3 +55,10 @@ def test_detail_email_delete_url():
 
     path = reverse('email-delete', kwargs={'pk': 1, 'person_id': 1})
     assert resolve(path).view_name == 'email-delete'
+
+
+def test_detail_email_add_url():
+    """ Verify the returned path name """
+
+    path = reverse('phone-create', kwargs={'pk': 1})
+    assert resolve(path).view_name == 'phone-create'

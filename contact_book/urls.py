@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (HomePageView, PersonCreateView, PersonUpdateView,
                     PersonDeleteView, PersonDetailView, EmailCreateView,
-                    EmailUpdateView, EmailDeleteView)
+                    EmailUpdateView, EmailDeleteView, PhoneCreateView)
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
@@ -14,5 +14,6 @@ urlpatterns = [
     path('email/update/<int:person_id>/<int:pk>/', EmailUpdateView.as_view(),
          name='email-update'),
     path('email/delete/<int:person_id>/<int:pk>/', EmailDeleteView.as_view(),
-         name='email-delete')
+         name='email-delete'),
+    path('phone/create/<int:pk>/', PhoneCreateView.as_view(), name='phone-create')
 ]

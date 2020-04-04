@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils import timezone
 
@@ -38,8 +39,20 @@ class Email(models.Model):
 class Phone(models.Model):
     """ Phone model """
 
-    phone = models.DecimalField(max_digits=9, decimal_places=0, null=False, unique=True)
+    phone = models.IntegerField(null=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
+
+    def validate_unique(self, exclude=None):
+        qs = Phone.objects.filter(phone=self.phone).all()
+        if qs.filter(person=self.person).exists():
+            raise ValidationError("Phone number for this person already exists")
+
+    def save(self, *args, **kwargs):
+        self.validate_unique()
+        super(Phone, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{str(self.person)} phone: {self.phone}'
+
+    def get_absolute_url(self):
+        return reverse('detail-person', kwargs={'pk': self.person.pk})

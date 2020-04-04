@@ -36,7 +36,7 @@ def email(db):
                              (AnonymousUser(), 302)
                          ])
 def test_home_view_authentication(user, response_code, factory, db):
-    """ Verify if home page is accessible if user is authenticated """
+    """ Verify if home page is accessible based on authentication """
 
     path = reverse('home')
     request = factory.get(path)
@@ -83,8 +83,8 @@ def test_person_edit_correct_user(factory, user,
 def test_person_edit_incorrect_user(factory, user,
                                     person, db):
     """
-    Verify if person editing is accessible if user is authenticated and not created the
-    person.
+    Verify if person editing is not accessible if user is authenticated and didn't
+    create the person.
     """
 
     path = reverse('update-person', kwargs={'pk': 1})
@@ -97,7 +97,7 @@ def test_person_edit_incorrect_user(factory, user,
 
 def test_person_edit_anonymous_user(factory, db):
     """
-    Verify if person editing is accessible if user is unauthenticated
+    Verify if person editing is not accessible if user is unauthenticated
     """
 
     path = reverse('update-person', kwargs={'pk': 1})
@@ -128,8 +128,8 @@ def test_person_delete_correct_user(factory, user,
 def test_person_delete_incorrect_user(factory, user,
                                       person, db):
     """
-    Verify if person deleting is accessible if user is authenticated and not created the
-    person.
+    Verify if person deleting is not accessible if user is authenticated and didn't
+    create the person.
     """
 
     path = reverse('delete-person', kwargs={'pk': 1})
@@ -142,7 +142,7 @@ def test_person_delete_incorrect_user(factory, user,
 
 def test_person_delete_anonymous_user(factory, person, db):
     """
-    Verify if person deleting is accessible if user is unauthenticated
+    Verify if person deleting is not accessible if user is unauthenticated
     """
 
     path = reverse('delete-person', kwargs={'pk': 1})
@@ -173,8 +173,8 @@ def test_person_detail_correct_user(factory, user,
 def test_person_detail_incorrect_user(factory, user,
                                       person, db):
     """
-    Verify if person detail is accessible if user is authenticated and created the
-    person.
+    Verify if person detail is not accessible if user is authenticated and didn't
+    create the person.
     """
 
     path = reverse('detail-person', kwargs={'pk': 1})
@@ -187,7 +187,7 @@ def test_person_detail_incorrect_user(factory, user,
 
 def test_person_detail_anonymous_user(factory, person, db):
     """
-    Verify if person detail is accessible if user is unauthenticated
+    Verify if person detail is not accessible if user is unauthenticated
     """
 
     path = reverse('detail-person', kwargs={'pk': 1})
@@ -218,8 +218,8 @@ def test_email_create_correct_user(factory, user,
 def test_email_create_incorrect_user(factory, user,
                                      person, db):
     """
-    Verify if person detail is accessible if user is authenticated and created the
-    person.
+    Verify if create email is not accessible if user is authenticated and didn't
+    create the person.
     """
 
     path = reverse('email-create', kwargs={'pk': 1})
@@ -232,7 +232,7 @@ def test_email_create_incorrect_user(factory, user,
 
 def test_email_create_anonymous_user(factory, person, db):
     """
-    Verify if person detail is accessible if user is unauthenticated
+    Verify if create email is not accessible if user is unauthenticated
     """
 
     path = reverse('email-create', kwargs={'pk': 1})
@@ -243,4 +243,92 @@ def test_email_create_anonymous_user(factory, person, db):
 
     assert response.status_code == 302
 
-# TODO - END THE REST OF THE TESTS FOR EMAIL
+
+def test_email_edit_correct_user(factory, user,
+                                 person, db, email):
+    """
+    Verify if email editing is accessible if user is authenticated and created the
+    person.
+    """
+
+    path = reverse('email-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = person.owner
+
+    response = EmailUpdateView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 200
+
+
+def test_email_edit_incorrect_user(factory, user,
+                                   person, db, email):
+    """
+    Verify if email edit is not accessible if user is authenticated and
+    didn't create the person.
+    """
+
+    path = reverse('email-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = EmailUpdateView.as_view()(request, pk=1, person_id=1)
+
+
+def test_email_edit_anonymous_user(factory, person, db, email):
+    """
+    Verify if email update is not accessible if user is unauthenticated
+    """
+
+    path = reverse('email-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = AnonymousUser()
+
+    response = EmailUpdateView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 302
+
+
+def test_email_delete_correct_user(factory, user,
+                                   person, db, email):
+    """
+    Verify if email deleting is accessible if user is authenticated and created the
+    person.
+    """
+
+    path = reverse('email-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = person.owner
+
+    response = EmailDeleteView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 200
+
+
+def test_email_delete_incorrect_user(factory, user,
+                                     person, db, email):
+    """
+    Verify if email deleting is not accessible if user is authenticated and
+    didn't create the person.
+    """
+
+    path = reverse('email-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = EmailDeleteView.as_view()(request, pk=1, person_id=1)
+
+
+def test_email_delete_anonymous_user(factory, person, db, email):
+    """
+    Verify if email deleting is not accessible if user is unauthenticated
+    """
+
+    path = reverse('email-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = AnonymousUser()
+
+    response = EmailDeleteView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 302

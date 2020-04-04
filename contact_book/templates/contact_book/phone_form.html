@@ -5,11 +5,13 @@
     <form action="" method="POST">
         {% csrf_token %}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Add new phone number</legend>
+            <legend class="border-bottom mb-4">Phone number</legend>
             {{ form|crispy }}
         </fieldset>
         <div class="form-group">
             <button class="btn btn-outline-info" type="submit">Add</button>
+            <a class="btn btn-outline-danger"
+               href="{% url 'detail-person' view.kwargs.person_id %}">Cancel</a>
         </div>
     </form>
 </div>

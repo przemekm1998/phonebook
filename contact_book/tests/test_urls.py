@@ -39,7 +39,7 @@ def test_detail_person_detail_url():
 def test_detail_email_add_url():
     """ Verify the returned path name """
 
-    path = reverse('email-create', kwargs={'pk': 1})
+    path = reverse('email-create', kwargs={'person_id': 1})
     assert resolve(path).view_name == 'email-create'
 
 
@@ -57,8 +57,22 @@ def test_detail_email_delete_url():
     assert resolve(path).view_name == 'email-delete'
 
 
-def test_detail_email_add_url():
+def test_detail_phone_add_url():
     """ Verify the returned path name """
 
-    path = reverse('phone-create', kwargs={'pk': 1})
+    path = reverse('phone-create', kwargs={'person_id': 1})
     assert resolve(path).view_name == 'phone-create'
+
+
+def test_detail_phone_update_url():
+    """ Verify the returned path name """
+
+    path = reverse('phone-update', kwargs={'person_id': 1, 'pk': 1})
+    assert resolve(path).view_name == 'phone-update'
+
+
+def test_detail_phone_delete_url():
+    """ Verify the returned path name """
+
+    path = reverse('phone-delete', kwargs={'person_id': 1, 'pk': 1})
+    assert resolve(path).view_name == 'phone-delete'

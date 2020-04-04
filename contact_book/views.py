@@ -76,15 +76,15 @@ class EmailCreateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMix
 
     @property
     def person(self):
-        return Person.objects.filter(id=self.kwargs['pk']).first()
+        return Person.objects.filter(id=self.kwargs['person_id']).first()
 
-    def form_valid(self, form):
-        """
-        Setting the email's owner automatically to the person being currently
-        listed
-         """
-        form.instance.person = self.person
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        self.object = Email(person=self.person)
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
     def test_func(self):
         """ Check if user requesting to add email to a person is it's owner """
@@ -99,15 +99,15 @@ class EmailUpdateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMix
 
     @property
     def person(self):
-        return Person.objects.filter(id=self.kwargs['pk']).first()
+        return Person.objects.filter(id=self.kwargs['person_id']).first()
 
-    def form_valid(self, form):
-        """
-        Setting the email's owner automatically to the person being currently
-        listed
-         """
-        form.instance.person = self.person
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
     def test_func(self):
         """ Check if user requesting to update person's email is it's owner """
@@ -115,7 +115,7 @@ class EmailUpdateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMix
 
 
 class EmailDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Person
+    model = Email
 
     @property
     def success_url(self):
@@ -123,7 +123,7 @@ class EmailDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     @property
     def person(self):
-        return Person.objects.filter(id=self.kwargs['pk']).first()
+        return Person.objects.filter(id=self.kwargs['person_id']).first()
 
     def test_func(self):
         """ Check if user requesting to delete an email is owner of the person which
@@ -139,7 +139,7 @@ class PhoneCreateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMix
 
     @property
     def person(self):
-        return Person.objects.filter(id=self.kwargs['pk']).first()
+        return Person.objects.filter(id=self.kwargs['person_id']).first()
 
     def post(self, request, *args, **kwargs):
         self.object = Phone(person=self.person)
@@ -151,4 +151,44 @@ class PhoneCreateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMix
 
     def test_func(self):
         """ Check if user requesting to add phone number to person is it's owner """
+        return True if self.request.user == self.person.owner else False
+
+
+class PhoneUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin,
+                      UpdateView):
+    model = Phone
+    form_class = PhoneForm
+    success_message = 'Phone number updated successfully'
+
+    @property
+    def person(self):
+        return Person.objects.filter(id=self.kwargs['person_id']).first()
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def test_func(self):
+        """ Check if user requesting to add phone number to person is it's owner """
+        return True if self.request.user == self.person.owner else False
+
+
+class PhoneDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Phone
+
+    @property
+    def success_url(self):
+        return reverse('detail-person', kwargs={'pk': self.person.id})
+
+    @property
+    def person(self):
+        return Person.objects.filter(id=self.kwargs['person_id']).first()
+
+    def test_func(self):
+        """ Check if user requesting to delete an email is owner of the person which
+        holds it """
         return True if self.request.user == self.person.owner else False

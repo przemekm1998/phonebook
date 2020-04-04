@@ -29,6 +29,15 @@ class Email(models.Model):
     email = models.EmailField(null=False)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
 
+    def validate_unique(self, exclude=None):
+        qs = Email.objects.filter(email=self.email).all()
+        if qs.filter(person=self.person).exists():
+            raise ValidationError(f"{self.email} email for this person already exists")
+
+    def save(self, *args, **kwargs):
+        self.validate_unique()
+        super(Email, self).save(*args, **kwargs)
+
     def __str__(self):
         return f'{str(self.person)} email: {self.email}'
 
@@ -45,7 +54,7 @@ class Phone(models.Model):
     def validate_unique(self, exclude=None):
         qs = Phone.objects.filter(phone=self.phone).all()
         if qs.filter(person=self.person).exists():
-            raise ValidationError("Phone number for this person already exists")
+            raise ValidationError(f"{self.phone} number for this person already exists")
 
     def save(self, *args, **kwargs):
         self.validate_unique()

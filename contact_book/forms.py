@@ -36,10 +36,6 @@ class PersonSearchForm(forms.Form):
                            widget=forms.TextInput(
                                attrs={'placeholder': 'Some note'}))
 
-    phone = forms.IntegerField(required=False, label='Search phone number',
-                               widget=forms.TextInput(
-                                   attrs={'placeholder': '111222333'}))
-
 
 class EmailSearchForm(forms.Form):
     first_name = forms.CharField(required=False, label='Search first name',
@@ -53,3 +49,17 @@ class EmailSearchForm(forms.Form):
     email = forms.CharField(required=False, label='Search email',
                             widget=forms.TextInput(
                                 attrs={'placeholder': 'john.doe@example.com'}))
+
+
+class PhoneSearchForm(forms.Form):
+    first_name = forms.CharField(required=False, label='Search first name',
+                                 widget=forms.TextInput(
+                                     attrs={'placeholder': 'John'}))
+
+    second_name = forms.CharField(required=False, label='Search second name',
+                                  widget=forms.TextInput(
+                                      attrs={'placeholder': 'Doe'}))
+
+    phone = forms.CharField(required=False, label='Search phone number',
+                            widget=forms.TextInput(
+                                attrs={'placeholder': '111222333'}))

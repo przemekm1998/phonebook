@@ -1,7 +1,7 @@
 {% extends "contact_book/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1 class="mb-3">Search emails</h1>
+<h1 class="mb-3">Search phones</h1>
 <hr>
 <form method="get">
     {{ form|crispy }}
@@ -17,29 +17,31 @@
                 <thead class="thead-dark">
                 <tr>
                     <th>Person</th>
-                    <th>Email</th>
+                    <th>Phone</th>
                     <th></th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for email in emails %}
+                {% for phone in phones %}
                 <tr>
                     <td>
-                        <a href="{% url 'detail-person' email.person.id %}">
-                            {{ email.person.first_name }} {{ email.person.second_name }}
+                        <a href="{% url 'detail-person' phone.person.id %}">
+                            {{ phone.person.first_name }} {{ phone.person.second_name }}
                         </a>
                     </td>
-                    <td>{{ email.email }}</td>
+                    <td>{{ phone.phone }}</td>
                     <td>
-                        <a href="{% url 'email-update' person_id=email.person.id pk=email.id %}"
-                           class="btn btn-info btn-sm">
-                            Update Email
+                        <a
+                                href="{% url 'phone-update' person_id=phone.person.id pk=phone.id %}"
+                                class="btn btn-info btn-sm">
+                            Update Phone
                         </a></td>
                     <td>
-                        <a href="{% url 'email-delete' person_id=email.person.id pk=email.id %}"
-                           class="btn btn-outline-danger btn-sm">
-                            Delete Email
+                        <a
+                                href="{% url 'phone-delete' person_id=phone.person.id pk=phone.id %}"
+                                class="btn btn-outline-danger btn-sm">
+                            Delete Phone
                         </a></td>
                 </tr>
                 {% endfor %}

@@ -6,8 +6,8 @@ from mixer.backend.django import mixer
 from contact_book.views import (HomePageView, EmailCreateView, PersonCreateView,
                                 PersonUpdateView, PersonDeleteView, PersonDetailView,
                                 EmailCreateView, EmailUpdateView, EmailDeleteView,
-                                PhoneCreateView)
-from contact_book.models import Person, Email
+                                PhoneCreateView, PhoneUpdateView, PhoneDeleteView)
+from contact_book.models import Person, Email, Phone
 from django.core.exceptions import PermissionDenied
 
 
@@ -30,6 +30,10 @@ def person(db):
 def email(db):
     yield mixer.blend(Email)
 
+
+@pytest.fixture(scope='function')
+def phone(db):
+    yield mixer.blend(Phone)
 
 @pytest.mark.parametrize('user, response_code',
                          [
@@ -207,11 +211,11 @@ def test_email_create_correct_user(factory, user,
     person.
     """
 
-    path = reverse('email-create', kwargs={'pk': 1})
+    path = reverse('email-create', kwargs={'person_id': 1})
     request = factory.get(path)
     request.user = person.owner
 
-    response = EmailCreateView.as_view()(request, pk=1)
+    response = EmailCreateView.as_view()(request, person_id=1)
 
     assert response.status_code == 200
 
@@ -223,12 +227,12 @@ def test_email_create_incorrect_user(factory, user,
     create the person.
     """
 
-    path = reverse('email-create', kwargs={'pk': 1})
+    path = reverse('email-create', kwargs={'person_id': 1})
     request = factory.get(path)
     request.user = user
 
     with pytest.raises(PermissionDenied):
-        response = EmailCreateView.as_view()(request, pk=1)
+        response = EmailCreateView.as_view()(request, person_id=1)
 
 
 def test_email_create_anonymous_user(factory, person, db):
@@ -236,11 +240,11 @@ def test_email_create_anonymous_user(factory, person, db):
     Verify if create email is not accessible if user is unauthenticated
     """
 
-    path = reverse('email-create', kwargs={'pk': 1})
+    path = reverse('email-create', kwargs={'person_id': 1})
     request = factory.get(path)
     request.user = AnonymousUser()
 
-    response = EmailCreateView.as_view()(request, pk=1)
+    response = EmailCreateView.as_view()(request, person_id=1)
 
     assert response.status_code == 302
 
@@ -343,11 +347,11 @@ def test_phone_create_correct_user(factory, user,
     person.
     """
 
-    path = reverse('phone-create', kwargs={'pk': 1})
+    path = reverse('phone-create', kwargs={'person_id': 1})
     request = factory.get(path)
     request.user = person.owner
 
-    response = PhoneCreateView.as_view()(request, pk=1)
+    response = PhoneCreateView.as_view()(request, person_id=1)
 
     assert response.status_code == 200
 
@@ -359,12 +363,12 @@ def test_phone_create_incorrect_user(factory, user,
     create the person.
     """
 
-    path = reverse('phone-create', kwargs={'pk': 1})
+    path = reverse('phone-create', kwargs={'person_id': 1})
     request = factory.get(path)
     request.user = user
 
     with pytest.raises(PermissionDenied):
-        response = PhoneCreateView.as_view()(request, pk=1)
+        response = PhoneCreateView.as_view()(request, person_id=1)
 
 
 def test_phone_create_anonymous_user(factory, person, db):
@@ -372,10 +376,100 @@ def test_phone_create_anonymous_user(factory, person, db):
     Verify if create phone number is not accessible if user is unauthenticated
     """
 
-    path = reverse('phone-create', kwargs={'pk': 1})
+    path = reverse('phone-create', kwargs={'person_id': 1})
     request = factory.get(path)
     request.user = AnonymousUser()
 
-    response = PhoneCreateView.as_view()(request, pk=1)
+    response = PhoneCreateView.as_view()(request, person_id=1)
+
+    assert response.status_code == 302
+
+
+def test_phone_edit_correct_user(factory, user,
+                                 person, db, phone):
+    """
+    Verify if phone editing is accessible if user is authenticated and created the
+    person.
+    """
+
+    path = reverse('phone-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = person.owner
+
+    response = PhoneUpdateView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 200
+
+
+def test_phone_edit_incorrect_user(factory, user,
+                                   person, db, phone):
+    """
+    Verify if phone edit is not accessible if user is authenticated and
+    didn't create the person.
+    """
+
+    path = reverse('phone-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = PhoneUpdateView.as_view()(request, pk=1, person_id=1)
+
+
+def test_phone_edit_anonymous_user(factory, person, db, phone):
+    """
+    Verify if phone update is not accessible if user is unauthenticated
+    """
+
+    path = reverse('phone-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = AnonymousUser()
+
+    response = PhoneUpdateView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 302
+
+
+def test_phone_delete_correct_user(factory, user,
+                                   person, db, phone):
+    """
+    Verify if phone deleting is accessible if user is authenticated and created the
+    person.
+    """
+
+    path = reverse('phone-delete', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = person.owner
+
+    response = PhoneDeleteView.as_view()(request, pk=1, person_id=1)
+
+    assert response.status_code == 200
+
+
+def test_phone_delete_incorrect_user(factory, user,
+                                     person, db, phone):
+    """
+    Verify if phone deleting is not accessible if user is authenticated and
+    didn't create the person.
+    """
+
+    path = reverse('phone-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = user
+
+    with pytest.raises(PermissionDenied):
+        response = PhoneDeleteView.as_view()(request, pk=1, person_id=1)
+
+
+def test_phone_delete_anonymous_user(factory, person, db, phone):
+    """
+    Verify if phone deleting is not accessible if user is unauthenticated
+    """
+
+    path = reverse('phone-update', kwargs={'pk': 1, 'person_id': 1})
+    request = factory.get(path)
+    request.user = AnonymousUser()
+
+    response = PhoneDeleteView.as_view()(request, pk=1, person_id=1)
 
     assert response.status_code == 302

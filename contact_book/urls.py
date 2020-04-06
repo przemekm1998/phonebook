@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (HomePageView, PersonCreateView, PersonUpdateView,
                     PersonDeleteView, PersonDetailView, EmailCreateView,
-                    EmailUpdateView, EmailDeleteView, PhoneCreateView,
+                    EmailUpdateView, EmailDeleteView, EmailSearchView, PhoneCreateView,
                     PhoneUpdateView, PhoneDeleteView)
 
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
          name='email-update'),
     path('email/delete/<int:person_id>/<int:pk>/', EmailDeleteView.as_view(),
          name='email-delete'),
+    path('email/search/', EmailSearchView.as_view(), name='email-search'),
     path('phone/create/<int:person_id>/', PhoneCreateView.as_view(),
          name='phone-create'),
     path('phone/update/<int:person_id>/<int:pk>/', PhoneUpdateView.as_view(),

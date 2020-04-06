@@ -1,0 +1,53 @@
+{% extends "contact_book/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1 class="mb-3">Search emails</h1>
+<hr>
+<form method="get">
+    {{ form|crispy }}
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+<hr>
+<article class="media content-section">
+    <div class="media-body">
+        <div class="mt-5 mb-5">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Person</th>
+                    <th>Email</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for email in emails %}
+                <tr>
+                    <td>
+                        <a href="{% url 'detail-person' email.person.id %}">
+                            {{ email.person.first_name }} {{ email.person.second_name }}
+                        </a>
+                    </td>
+                    <td>{{ email.email }}</td>
+                    <td>
+                        <a
+                                href="{% url 'email-update' person_id=email.person.id pk=email.id %}"
+                                class="btn btn-info btn-sm">
+                            Update
+                        </a></td>
+                    <td><a
+                            href="{% url 'email-delete' person_id=email.person.id pk=email.id %}"
+                            class="btn btn-outline-danger btn-sm">
+                        Delete
+                    </a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</article>
+<hr>
+{% endblock content %}

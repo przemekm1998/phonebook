@@ -16,6 +16,8 @@ class HomePageView(LoginRequiredMixin, FormMixin, ListView):
     model = Person
     context_object_name = 'people'
     form_class = PersonSearchForm
+    ordering = ['-date_added']
+    paginate_by = 10
 
     def get_queryset(self):
         """ Get people list of a particular user """
@@ -27,9 +29,9 @@ class HomePageView(LoginRequiredMixin, FormMixin, ListView):
                 first_name__icontains=form.cleaned_data['first_name'],
                 second_name__icontains=form.cleaned_data['second_name'],
                 note__icontains=form.cleaned_data['note'],
-                owner=user).order_by('-date_added')
+                owner=user).all()
 
-        return Person.objects.filter(owner=user).order_by('-date_added')
+        return Person.objects.filter(owner=user).all()
 
 
 class PersonCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

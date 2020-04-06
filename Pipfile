@@ -12,6 +12,9 @@ pytest = "*"
 pytest-cov = "*"
 mixer = "*"
 django-crispy-forms = "*"
+django-filters = "*"
+django-filter = "*"
+django-search-view = "*"
 
 [requires]
 python_version = "3.7"

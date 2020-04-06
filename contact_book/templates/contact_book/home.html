@@ -1,12 +1,15 @@
 {% extends "contact_book/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
 <h1 class="mb-3">Hello {{user.username}}, welcome to contacts book!</h1>
-{% if not people %}
-<h2>
-    It seems you have no contacts yet, <a href="{% url 'create-person' %}"> add one
-    here!</a></h2>
-{% else %}
 <h2 class="mb-3"> Your contacts:</h2>
+<hr>
+<form method="get">
+    {{ form|crispy }}
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
 <hr>
 {% for person in people %}
 <article class="media content-section">
@@ -29,5 +32,4 @@
 </article>
 <hr>
 {% endfor %}
-{% endif %}
 {% endblock content %}

@@ -11,7 +11,7 @@ class Person(models.Model):
 
     first_name = models.CharField(max_length=20, null=False)
     second_name = models.CharField(max_length=30, null=False)
-    date_added = models.DateTimeField(default=timezone.now)
+    date_added = models.DateTimeField(blank=True, null=True, default=timezone.now)
     note = models.TextField(null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 

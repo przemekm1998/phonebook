@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',  # new
     'contact_book.apps.ContactBookConfig',  # new
     'crispy_forms',  # new
+    'django_filters',  # new
 ]
 
 MIDDLEWARE = [

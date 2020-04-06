@@ -1,23 +1,34 @@
 from django.urls import reverse
 from django.views.generic import (ListView, CreateView, UpdateView, DeleteView,
                                   DetailView, FormView)
+from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from .models import Person, Email, Phone
 from django.contrib.messages.views import SuccessMessageMixin
-from .forms import PhoneForm
+from .forms import PhoneForm, PersonSearchForm
 
 
-class HomePageView(LoginRequiredMixin, ListView):
+class HomePageView(LoginRequiredMixin, FormMixin, ListView):
     """ Main home page view accessible after login """
 
     template_name = 'contact_book/home.html'
     model = Person
     context_object_name = 'people'
+    form_class = PersonSearchForm
 
     def get_queryset(self):
         """ Get people list of a particular user """
+
+        form = self.form_class(self.request.GET)
         user = User.objects.filter(username=self.request.user.username).first()
+        if form.is_valid():
+            return Person.objects.filter(
+                first_name__icontains=form.cleaned_data['first_name'],
+                second_name__icontains=form.cleaned_data['second_name'],
+                note__icontains=form.cleaned_data['note'],
+                owner=user).order_by('-date_added')
+
         return Person.objects.filter(owner=user).order_by('-date_added')
 
 
@@ -129,6 +140,29 @@ class EmailDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         """ Check if user requesting to delete an email is owner of the person which
         holds it """
         return True if self.request.user == self.person.owner else False
+
+
+# class EmailSearchView(LoginRequiredMixin, FormMixin, ListView):
+#     """ Search email view accessible after login """
+#
+#     template_name = 'contact_book/search_email.html'
+#     model = Email
+#     context_object_name = 'emails'
+#     form_class = EmailSearchForm
+#
+#     def get_queryset(self):
+#         """ Get searched email list of a particular user """
+#
+#         form = self.form_class(self.request.GET)
+#         user = User.objects.filter(username=self.request.user.username).first()
+#         if form.is_valid():
+#             = Person.objects.filter(
+#                 first_name__icontains=form.cleaned_data['first_name'],
+#                 second_name__icontains=form.cleaned_data['second_name'],
+#                 note__icontains=form.cleaned_data['note'],
+#                 owner=user).order_by('-date_added')
+#
+#         return Person.objects.filter(owner=user).order_by('-date_added')
 
 
 class PhoneCreateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin,

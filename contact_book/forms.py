@@ -21,3 +21,17 @@ class PhoneForm(forms.ModelForm):
                 code='invalid')
 
         return phone
+
+
+class PersonSearchForm(forms.Form):
+    first_name = forms.CharField(required=False, label='Search first name',
+                                 widget=forms.TextInput(
+                                     attrs={'placeholder': 'John'}))
+
+    second_name = forms.CharField(required=False, label='Search second name',
+                                  widget=forms.TextInput(
+                                      attrs={'placeholder': 'Doe'}))
+
+    note = forms.CharField(required=False, label='Search note',
+                           widget=forms.TextInput(
+                               attrs={'placeholder': 'Some note'}))

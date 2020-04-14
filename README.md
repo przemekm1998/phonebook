@@ -4,3 +4,5 @@ A simple phonebook app which allows users to create their accounts, log in and a
 
 ## Try it yourself
 You can click this app through if go to ```https://przemek-phonebook-app.herokuapp.com/```
+login: test
+password: testtesttest
